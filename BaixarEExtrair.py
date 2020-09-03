@@ -25,13 +25,12 @@ class GerenciadorDeDownloadEExtracao:
     #Define o ano de Download e o nome do arquivo que será baixado
     def definirAnoECaminhos(self, ano):
         self._ano = ano
-        self._DownloadDir = "Arquivos/Zip/" + str(self._ano) + ".zip"
-        self._ExtractDir = "Arquivos/DadosBrutos/" + str(self._ano)
+        self._DownloadDir = "./Arquivos/Zip/" + str(self._ano) + ".zip"
+        self._ExtractDir = "./Arquivos/DadosBrutos/" + str(self._ano)
         
     #Verifica se os diretorios de download e extração existem e,
     #caso não existam, cria-os.
     def assegurarAExistenciaDosDiretorios(self):
-        return
         try:
             if not os.path.exists(self._DownloadDir):
                 os.makedirs(self._DownloadDir)
@@ -75,8 +74,6 @@ class GerenciadorDeDownloadEExtracao:
     def extrairArquivo(self):
         try:
             arquivoZip = zipfile.ZipFile(self._DownloadDir)
-            print(self._DownloadDir)
-            print(self._ExtractDir)
             arquivoZip.extractall(self._ExtractDir)
         except Exception as e:
             print("Erro ao extrair arquivo.")

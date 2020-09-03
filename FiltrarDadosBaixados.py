@@ -1,5 +1,6 @@
 import csv
 import tkinter
+import os
 
 class Janela:
     def __init__(self, cabecalho):
@@ -37,12 +38,15 @@ class ArquivoCSV:
         
     def start(self, ano):
         self.definirAnoEDiretorioDoArquivo(ano)
+        self.assegurarAExistenciaDosDiretorios()
         with open(self._diretorioDosDadosBrutos, 'r', newline='') as csvfileLeitura:
             dicionarioComDadosBrutos = csv.DictReader(csvfileLeitura, delimiter=';')
+            print("Iniciando janela para seleção dos dados")
             janelaParaEscolhaDeInformacoes = Janela(dicionarioComDadosBrutos.fieldnames)
             valoresCheckbutton = janelaParaEscolhaDeInformacoes.obterValoresDoCheckbutton()
             with open(self._diretorioDosDadosFiltrados, 'w', newline='') as csvfileEscrita:
                 cabecalhoDosDadosFiltrados = []
+                print("Filtrando dados...")
                 for i in range(0, len(valoresCheckbutton)):
                     if(valoresCheckbutton[i].get() == 1):
                         cabecalhoDosDadosFiltrados.append(dicionarioComDadosBrutos.fieldnames[i])
@@ -53,12 +57,20 @@ class ArquivoCSV:
                     for key in cabecalhoDosDadosFiltrados:
                         dicionario[key] = row[key]
                     arquivoParaEscrita.writerow(dicionario)
-                        
+        print("Dados filtrados com sucesso!")
     
     #FUNÇÕES INTERNAS
     #Define o diretório e o ano do arquivo que passará pelo filtro
     def definirAnoEDiretorioDoArquivo(self, ano):
         self._ano = ano
-        self._diretorioDosDadosBrutos = "Arquivos/DadosBrutos/" + str(ano) + "/DADOS/MICRODADOS_ENEM_" + str(ano) + ".csv"
-        self._diretorioDosDadosFiltrados = "Arquivos/DadosFiltrados/" + str(ano) + ".csv"
-        
+        self._diretorioDosDadosBrutos = './Arquivos/DadosBrutos/' + str(ano) + '/DADOS/MICRODADOS_ENEM_' + str(ano) + '.csv'
+        self._diretorioDosDadosFiltrados = './Arquivos/DadosFiltrados/' + str(ano) + '.csv'
+
+    def assegurarAExistenciaDosDiretorios(self):
+        try:
+            if not os.path.exists('./Arquivos/DadosFiltrados/'):
+                os.makedirs('./Arquivos/DadosFiltrados/')
+        except Exception as e:
+            print("Erro ao criar diretórios.")
+            print("Por favor, tente novamente.")
+            raise(e)
